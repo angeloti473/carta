@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta Romántica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#ffe4ec,#fff7fa);
+  font-family:'Quicksand',sans-serif;
+  overflow:hidden;
+}
+
+.container{
+  position:relative;
+  width:280px;
+  height:360px;
+}
+
+/* SOBRE */
+.envelope{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:180px;
+  background:#f7b3c7;
+  border-radius:20px; /* bordes redondeados */
+  cursor:pointer;
+  box-shadow:0 15px 35px rgba(0,0,0,.25);
+  z-index:3;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* TAPA DEL SOBRE - triángulo hacia abajo */
+.lid {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:90px;
+  background:#f29ab6;
+  clip-path: polygon(0 0, 100% 0, 50% 100%); /* punta hacia abajo */
+  transform-origin: top center;
+  transition: transform 1s ease;
+  z-index:4;
+}
+
+/* Corazón y "Tócame" centrados visualmente en el sobre */
+.touch {
+  position:absolute;
+  top:70%; /* más abajo que antes */
+  left:50%;
+  transform:translate(-50%, -50%);
+  font-size:18px;
+  color:#ff6b9c;
+  text-align:center;
+  user-select:none;
+  cursor:pointer;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.touch span {
+  font-size:32px;
+  margin-bottom:5px;
+}
+
+/* CARTA */
+.letter{
+  position:absolute;
+  bottom:40px; 
+  left:50%;
+  transform:translateX(-50%) translateY(140px) scale(0.8);
+  width:260px;
+  background:#fff;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 20px 45px rgba(0,0,0,.3);
+  opacity:0;
+  visibility:hidden;
+  z-index:2;
+  transition:transform 2.5s cubic-bezier(.25,.8,.25,1),opacity 1s;
+}
+
+.letter.show{
+  transform:translateX(-50%) translateY(0) scale(1);
+  opacity:1;
+  visibility:visible;
+}
+
+.image{
+  width:110px;height:110px;
+  border-radius:50%;
+  margin:0 auto 15px;
+  border:5px solid #f5a1ba;
+  overflow:hidden;
+}
+
+.image img{width:100%;height:100%;object-fit:cover;}
+
+h1{
+  font-family:'Playfair Display',serif;
+  color:#c94f7c;
+  text-align:center;
+  margin:10px 0;
+}
+
+p{
+  font-size:15px;
+  color:#555;
+  text-align:center;
+  min-height:70px;
+}
+
+.flowers{
+  display:flex;
+  justify-content:space-between;
+  margin-top:15px;
+}
+
+.flowers img{width:40px;}
+
+/* CORAZONES */
+.heart{
+  position:absolute;
+  color:#ff6b9c;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(0);opacity:1;}
+  to{transform:translateY(-120vh);opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Carta -->
+  <div class="letter" id="letter">
+    <div class="image"><img src="dibujo.png" alt="Imagen"></div>
+    <h1>Para Ti</h1>
+    <p id="text"></p>
+    <div class="flowers">
+      <img src="gerbera.png" alt="Gerbera">
+      <img src="gerbera.png" alt="Gerbera">
+      <img src="gerbera.png" alt="Gerbera">
+    </div>
+  </div>
+
+  <!-- Sobre -->
+  <div class="envelope" id="envelope">
+    <div class="lid" id="lid"></div>
+  </div>
+
+  <!-- Corazón y "Tócame" centrados dentro del sobre -->
+  <div class="touch" id="touch"><span>❤</span>Tócame</div>
+</div>
+
+<audio id="music" src="cancion.mp3"></audio>
+
+<script>
+const envelope = document.getElementById('envelope');
+const lid = document.getElementById('lid');
+const letter = document.getElementById('letter');
+const textEl = document.getElementById('text');
+const music = document.getElementById('music');
+const touch = document.getElementById('touch');
+
+const message = "Muchas gracias mi amor por este mes lleno de felicidad, sin duda alguna el mejor de todo, gracias por apoyarme y escucharme simpre que lo necesito. Tu tambien contaras conmigo siempre y seras mi niña consentida. Por mas momentos a tu lado   💖";
+let index = 0;
+
+function escribir() {
+  if(index < message.length){
+    textEl.textContent += message.charAt(index);
+    index++;
+    setTimeout(escribir,50);
+  }
+}
+
+function createHeart() {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = '❤';
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = 14 + Math.random()*18 + 'px';
+  h.style.animationDuration = 4 + Math.random()*4 + 's';
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),8000);
+}
+
+function abrirCarta(){
+  // Animación de la tapa levantándose
+  lid.style.transform = 'rotateX(-180deg)';
+  
+  // Ocultar corazón y "Tócame"
+  touch.style.opacity='0';
+  touch.style.pointerEvents='none';
+
+  // Mostrar carta después de animación
+  setTimeout(()=>{
+    envelope.style.opacity='0';
+    envelope.style.pointerEvents='none';
+    letter.classList.add('show');  
+    music.play();
+    setTimeout(escribir, 500);  
+    setInterval(createHeart, 500);
+  }, 800);
+}
+
+// Abrir carta al tocar sobre el sobre o el corazón
+envelope.addEventListener('click', abrirCarta);
+touch.addEventListener('click', abrirCarta);
+</script>
+
+</body>
+</html>
+
